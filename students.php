@@ -7,6 +7,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>Hello, world!</title>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
   </head>
 
   <body>
@@ -203,6 +204,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
     <script>
       // Add a Student's info
       $(document).on('submit', '#saveStudent', function (e) {
@@ -227,6 +230,9 @@
               $('#errorMessage').addClass('d-none');
               $('#studentAddModal').modal('hide');
               $('#saveStudent')[0].reset();
+
+              alertify.set('notifier','position', 'top-right');
+              alertify.success(res.message);
 
               $('#studentTable').load(location.href + " #studentTable");
             }
@@ -282,6 +288,9 @@
             } else if (res.status == 200) {
               $('#errorMessageUpdate').addClass('d-none');
 
+              alertify.set('notifier','position', 'top-right');
+              alertify.success(res.message);
+
               $('#studentEditModal').modal('hide');
               $('#updateStudent')[0].reset();
 
@@ -336,7 +345,8 @@
               alert(res.message);
 
             } else {
-              alert(res.message);
+              alertify.set('notifier','position', 'top-right');
+              alertify.success(res.message);
 
               $('#studentTable').load(location.href + " #studentTable");
             }
