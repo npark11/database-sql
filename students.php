@@ -10,7 +10,7 @@
   </head>
 
   <body>
-    <!-- Modal -->
+    <!-- Modal ADD Student -->
     <div class="modal fade" id="studentAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -37,6 +37,46 @@
               <div class="mb-3">
                 <label for="">Course</label>
                 <input type="text" name="course" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary"       data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Student</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal EDIT Student -->
+    <div class="modal fade" id="studentEditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="updateStudent">
+            <div class="modal-body">
+              <div class="alert alert-warning d-none"></div>
+
+              <input type="hidden" name="student_id" id="student_id">
+               
+              <div class="mb-3">
+                <label for="">Name</label>
+                <input type="text" name="name" id="name"  class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="">Email</label>
+                <input type="text" name="email" id="email" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="">Phone</label>
+                <input type="text" name="phone" id="phone" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="">Course</label>
+                <input type="text" name="course" id="course" class="form-control">
               </div>
             </div>
             <div class="modal-footer">
@@ -97,19 +137,16 @@
                           <button 
                             type="button" 
                             value="<?= $student['id']; ?>"  
-                            class="btn btn-success">
+                            class="editStudentBtn btn btn-success">
                               Edit
                           </button>
-                          <a href="" class="editStudentBtn btn btn-danger">Delete</a>
+                          <a href="" class="btn btn-danger">Delete</a>
                         </td>
                       </tr>
                       <?php
                     }
                   }
                   ?>
-                  <tr>
-                    <td></td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -122,6 +159,7 @@
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+      // Add a Student's info
       $(document).on('submit', '#saveStudent', function (e) {
         e.preventDefault();
 
@@ -139,6 +177,7 @@
             if (res.status == 422) {
               $('#errorMessage').removeClass('d-none');
               $('#errorMessage').text(res.message);
+
             } else if (res.status == 200) {
               $('#errorMessage').addClass('d-none');
               $('#studentAddModal').modal('hide');
@@ -149,6 +188,63 @@
           }
         });
       });
+      
+      // Get info a Students
+      $(document).on('click', '.editStudentBtn', function () {
+        var student_id = $(this).val();
+        // alert(student_id);
+        $.ajax({
+          type: "GET",
+          url: "code.php?student_id=" + student_id,
+          success: function (response) {
+            var res = jQuery.parseJSON(response);
+            if (res.status == 422) {
+              alert(res.message);
+
+            } else if (res.status == 200) {
+              $('#student_id').val(res.data.id);
+              $('#name').val(res.data.name);
+              $('#email').val(res.data.email);
+              $('#phone').val(res.data.phone);
+              $('#course').val(res.data.course);
+
+              $('#studentEditModal').modal('show');
+            }
+          }
+        });
+
+      });
+
+      // Update
+      $(document).on('submit', '#saveStudent', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        formData.append("save_student", true);
+
+        $.ajax({
+          type: "POST",
+          url: "code.php",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var res = jQuery.parseJSON(response);
+            if (res.status == 422) {
+              $('#errorMessage').removeClass('d-none');
+              $('#errorMessage').text(res.message);
+
+            } else if (res.status == 200) {
+              $('#errorMessage').addClass('d-none');
+              $('#studentAddModal').modal('hide');
+              $('#saveStudent')[0].reset();
+
+              $('#studentTable').load(location.href + " #studentTable");
+            }
+          }
+        });
+      });
+
     </script>
 
   </body>

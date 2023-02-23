@@ -1,6 +1,33 @@
 <?php
   require 'dbcon.php';
 
+  // EDIT Student
+  if (isset($_GET['student_id'])) {
+    $student_id = mysqli_real_escape_string($con, $_GET['student_id']);
+
+    $query = "SELECT * FROM students WHERE id='$student_id' ";
+    $query_run = mysqli_query($con, $query);
+
+    if (mysqli_num_rows($query_run) == 1) {
+      $student = mysqli_fetch_array($query_run);
+      $res = [
+        'status' => 200,
+        'message' => 'Student Fetch Successfully',
+        'data' => $student
+      ];
+      echo json_encode($res);
+      return false;
+    } else {
+      $res = [
+        'status' => 404,
+        'message' => 'Student ID Not Found'
+      ];
+      echo json_encode($res);
+      return false;
+    }
+  }
+
+  // SAVE Student
   if (isset($_POST['save_student'])) {
 
     $name = mysqli_real_escape_string($con, $_POST['name']);
