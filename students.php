@@ -20,7 +20,7 @@
           </div>
           <form id="saveStudent">
             <div class="modal-body">
-              <div class="alert alert-warning d-none"></div>
+              <div id="errorMessage" class="alert alert-warning d-none"></div>
 
               <div class="mb-3">
                 <label for="">Name</label>
@@ -58,7 +58,8 @@
           </div>
           <form id="updateStudent">
             <div class="modal-body">
-              <div class="alert alert-warning d-none"></div>
+              
+              <div id="errorMessageUpdate" class="alert alert-warning d-none"></div>
 
               <input type="hidden" name="student_id" id="student_id">
                
@@ -81,7 +82,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary"       data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save Student</button>
+              <button type="submit" class="btn btn-primary">Update Student</button>
             </div>
           </form>
         </div>
@@ -216,11 +217,11 @@
       });
 
       // Update
-      $(document).on('submit', '#saveStudent', function (e) {
+      $(document).on('submit', '#updateStudent', function (e) {
         e.preventDefault();
 
         var formData = new FormData(this);
-        formData.append("save_student", true);
+        formData.append("update_student", true);
 
         $.ajax({
           type: "POST",
@@ -231,13 +232,14 @@
           success: function (response) {
             var res = jQuery.parseJSON(response);
             if (res.status == 422) {
-              $('#errorMessage').removeClass('d-none');
-              $('#errorMessage').text(res.message);
+              $('#errorMessageUpdate').removeClass('d-none');
+              $('#errorMessageUpdate').text(res.message);
 
             } else if (res.status == 200) {
-              $('#errorMessage').addClass('d-none');
-              $('#studentAddModal').modal('hide');
-              $('#saveStudent')[0].reset();
+              $('#errorMessageUpdate').addClass('d-none');
+
+              $('#studentEditModal').modal('hide');
+              $('#updateStudent')[0].reset();
 
               $('#studentTable').load(location.href + " #studentTable");
             }
