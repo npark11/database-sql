@@ -20,6 +20,8 @@
           </div>
           <form id="saveStudent">
             <div class="modal-body">
+              <div class="alert alert-warning d-none"></div>
+
               <div class="mb-3">
                 <label for="">Name</label>
                 <input type="text" name="name" class="form-control">
@@ -63,7 +65,53 @@
               </h4>
             </div>
             <div class="card-body">
+              <table id="studentTable" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Course</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php
+                  require 'dbcon.php';
 
+                  $query = "SELECT * FROM students";
+                  $query_run = mysqli_query($con, $query);
+
+                  if (mysqli_num_rows($query_run) > 0) {
+                    foreach($query_run as $student) {
+                      ?>
+                      <tr>
+                        <td><?= $student['id']; ?></td>
+                        <td><?= $student['name']; ?></td>
+                        <td><?= $student['email']; ?></td>
+                        <td><?= $student['phone']; ?></td>
+                        <td><?= $student['course']; ?></td>
+                        <td>
+                          <a href="" class="btn btn-info">View</a>
+                          <button 
+                            type="button" 
+                            value="<?= $student['id']; ?>"  
+                            class="btn btn-success">
+                              Edit
+                          </button>
+                          <a href="" class="editStudentBtn btn btn-danger">Delete</a>
+                        </td>
+                      </tr>
+                      <?php
+                    }
+                  }
+                  ?>
+                  <tr>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -71,7 +119,7 @@
     </div>
 
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       $(document).on('submit', '#saveStudent', function (e) {
@@ -86,11 +134,20 @@
           data: formData,
           processData: false,
           contentType: false,
-          success: function (respond) {
+          success: function (response) {
+            var res = jQuery.parseJSON(response);
+            if (res.status == 422) {
+              $('#errorMessage').removeClass('d-none');
+              $('#errorMessage').text(res.message);
+            } else if (res.status == 200) {
+              $('#errorMessage').addClass('d-none');
+              $('#studentAddModal').modal('hide');
+              $('#saveStudent')[0].reset();
 
+              $('#studentTable').load(location.href + " #studentTable");
+            }
           }
         });
-
       });
     </script>
 
