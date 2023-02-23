@@ -180,7 +180,12 @@
                             class="editStudentBtn btn btn-success">
                               Edit
                           </button>
-                          <a href="" class="btn btn-danger">Delete</a>
+                          <button 
+                            type="button" 
+                            value="<?= $student['id']; ?>"  
+                            class="deleteStudentBtn btn btn-danger">
+                              Delete
+                          </button>
                         </td>
                       </tr>
                       <?php
@@ -309,6 +314,37 @@
         });
 
       });
+
+      // Delete
+      $(document).on('click', '.deleteStudentBtn', function (e) {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this data?')) {
+          var student_id = $(this).val();
+
+          $.ajax({
+          type: "POST",
+          url: "code.php",
+          data: {
+            'delete_student': true,
+            'student_id': student_id
+          },
+          success: function (response) {
+            var res = jQuery.parseJSON(response);
+            
+            if(res.status == 500) {
+              alert(res.message);
+
+            } else {
+              alert(res.message);
+
+              $('#studentTable').load(location.href + " #studentTable");
+            }
+          }
+        });
+        }
+      });
+      
 
     </script>
 
